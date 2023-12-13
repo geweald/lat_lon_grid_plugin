@@ -5,14 +5,14 @@ homepage: https://github.com/matthiasdittmer/
 repository: https://github.com/matthiasdittmer/lat_lon_grid_plugin
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
-  flutter: '>=2.0.0'
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  flutter_map: '>=3.0.0'
-  latlong2: '>=0.8.0'
+  flutter_map: ">=6.0.0"
+  latlong2: ">=0.8.0"
 
 dev_dependencies:
   flutter_test:

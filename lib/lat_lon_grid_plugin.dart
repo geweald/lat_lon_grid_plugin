@@ -1,7 +1,7 @@
 library lat_lon_grid_plugin;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_map/plugin_api.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
 /// LatLonGridLayerOptions
@@ -83,7 +83,7 @@ class LatLonGridLayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mapState = FlutterMapState.maybeOf(context)!;
+    final mapState = MapCamera.maybeOf(context)!;
     return Center(
       child: CustomPaint(
         // the child SizedBox.expand() ensures that CustomPainter gets a size
@@ -112,7 +112,7 @@ class _LatLonPainter extends CustomPainter {
   double w = 0.0;
   double h = 0.0;
   final LatLonGridLayerOptions options;
-  final FlutterMapState mapState;
+  final MapCamera mapState;
   final Paint mPaint = Paint();
 
   // list of grid labels for latitude and longitude
@@ -138,13 +138,13 @@ class _LatLonPainter extends CustomPainter {
 
     // store bounds
     // mapState.bounds cannot actually be null
-    final north = mapState.bounds.north;
-    final west = mapState.bounds.west;
-    final south = mapState.bounds.south;
-    final east = mapState.bounds.east;
+    final north = mapState.visibleBounds.north;
+    final west = mapState.visibleBounds.west;
+    final south = mapState.visibleBounds.south;
+    final east = mapState.visibleBounds.east;
 
-    final bounds = mapState.getPixelBounds(mapState.zoom);
-    final CustomPoint topLeftPixel = bounds.topLeft;
+    final bounds = mapState.pixelBoundsAtZoom(mapState.zoom);
+    final topLeftPixel = bounds.topLeft;
 
     // getting the dimensions for a maximal sized text label
     final TextPainter textPainterMax = getTextPaint('180W');
@@ -159,9 +159,9 @@ class _LatLonPainter extends CustomPainter {
     lonGridLabels.clear();
     for (int i = 0; i < lonPos.length; i++) {
       // convert point to pixels
-      final CustomPoint projected =
+      final projected =
           mapState.project(LatLng(north, lonPos[i]), mapState.zoom);
-      final double pixelPos = projected.x - (topLeftPixel.x as double);
+      final double pixelPos = projected.x - (topLeftPixel.x);
 
       // draw line
       final pTopNorth = Offset(pixelPos, 0.0);
@@ -196,7 +196,7 @@ class _LatLonPainter extends CustomPainter {
       // convert back to pixels
       final CustomPoint projected =
           mapState.project(LatLng(latPos[i], east), mapState.zoom);
-      final double pixelPos = projected.y - (topLeftPixel.y as double);
+      final double pixelPos = projected.y - (topLeftPixel.y);
 
       // draw line
       final pLeftWest = Offset(0.0, pixelPos);
