@@ -39,10 +39,10 @@ class _HomePageState extends State<HomePage> {
 
   void _updateLabel() {
     if (_mapController != null) {
-      String lat = _mapController!.center.latitude.toStringAsFixed(3);
-      String lon = _mapController!.center.longitude.toStringAsFixed(3);
-      String zoom = _mapController!.zoom.toStringAsFixed(2);
-      String rotation = _mapController!.rotation.toStringAsFixed(2);
+      String lat = _mapController!.camera.center.latitude.toStringAsFixed(3);
+      String lon = _mapController!.camera.center.longitude.toStringAsFixed(3);
+      String zoom = _mapController!.camera.zoom.toStringAsFixed(2);
+      String rotation = _mapController!.camera.rotation.toStringAsFixed(2);
 
       // don't trigger rebuild while building aka. when the first build didn't finish yet
       if (_sLatLonZoom == '') {
@@ -93,9 +93,9 @@ class _HomePageState extends State<HomePage> {
           FlutterMap(
             mapController: _mapController,
             options: MapOptions(
-              center: LatLng(51.814, -2.170),
-              zoom: 6.15,
-              rotation: 0.0,
+              initialCenter: LatLng(51.814, -2.170),
+              initialZoom: 6.15,
+              initialRotation: 0.0,
               onPositionChanged: (position, hasGesture) => _updateLabel(),
             ),
             children: [

@@ -154,56 +154,49 @@ class _LatLonPainter extends CustomPainter {
     final double textPainterH = textPainterMax.height;
 
     // draw north-south lines
-    final List<double> lonPos = generatePositions(
-        west, east, inc[0], options._enableOverscan, -180.0, 180.0);
+    final List<double> lonPos = generatePositions(west, east, inc[0], options._enableOverscan, -180.0, 180.0);
     lonGridLabels.clear();
     for (int i = 0; i < lonPos.length; i++) {
       // convert point to pixels
-      final projected =
-          mapState.project(LatLng(north, lonPos[i]), mapState.zoom);
+      final projected = mapState.project(LatLng(north, lonPos[i]), mapState.zoom);
       final double pixelPos = projected.x - (topLeftPixel.x);
 
       // draw line
       final pTopNorth = Offset(pixelPos, 0.0);
       final pBottomSouth = Offset(pixelPos, h);
       // only draw visible lines, using one complete line width as buffer
-      if (pixelPos + options.lineWidth >= 0.0 &&
-          pixelPos - options.lineWidth <= w) {
+      if (pixelPos + options.lineWidth >= 0.0 && pixelPos - options.lineWidth <= w) {
         canvas.drawLine(pTopNorth, pBottomSouth, mPaint);
       }
       // label logic
-      if (pixelPos + textPainterMaxW >= 0.0 &&
-          pixelPos - textPainterMaxW <= w) {
+      if (pixelPos + textPainterMaxW >= 0.0 && pixelPos - textPainterMaxW <= w) {
         if (options.showLabels) {
           if (options._groupedLabelCalls) {
             // add to list
-            lonGridLabels.add(_GridLabel(lonPos[i], inc[1].toInt(), pixelPos,
-                h - options.offsetLonLabelsBottom - textPainterH, false));
+            lonGridLabels.add(_GridLabel(
+                lonPos[i], inc[1].toInt(), pixelPos, h - options.offsetLonLabelsBottom - textPainterH, false));
           } else {
             // draw labels
-            drawText(canvas, lonPos[i], inc[1].toInt(), pixelPos,
-                h - options.offsetLonLabelsBottom - textPainterH, false);
+            drawText(
+                canvas, lonPos[i], inc[1].toInt(), pixelPos, h - options.offsetLonLabelsBottom - textPainterH, false);
           }
         }
       }
     }
 
     // draw west-east lines
-    final List<double> latPos = generatePositions(
-        south, north, inc[0], options._enableOverscan, -90.0, 90.0);
+    final List<double> latPos = generatePositions(south, north, inc[0], options._enableOverscan, -90.0, 90.0);
     latGridLabels.clear();
     for (int i = 0; i < latPos.length; i++) {
       // convert back to pixels
-      final CustomPoint projected =
-          mapState.project(LatLng(latPos[i], east), mapState.zoom);
+      final projected = mapState.project(LatLng(latPos[i], east), mapState.zoom);
       final double pixelPos = projected.y - (topLeftPixel.y);
 
       // draw line
       final pLeftWest = Offset(0.0, pixelPos);
       final pRightEast = Offset(w, pixelPos);
       // only draw visible lines, using one complete line width as buffer
-      if (pixelPos + options.lineWidth >= 0.0 &&
-          pixelPos - options.lineWidth <= h) {
+      if (pixelPos + options.lineWidth >= 0.0 && pixelPos - options.lineWidth <= h) {
         canvas.drawLine(pLeftWest, pRightEast, mPaint);
       }
       // label logic
@@ -211,12 +204,10 @@ class _LatLonPainter extends CustomPainter {
         if (options.showLabels) {
           if (options._groupedLabelCalls) {
             // add to list
-            latGridLabels.add(_GridLabel(latPos[i], inc[1].toInt(),
-                options.offsetLatLabelsLeft, pixelPos, true));
+            latGridLabels.add(_GridLabel(latPos[i], inc[1].toInt(), options.offsetLatLabelsLeft, pixelPos, true));
           } else {
             // draw labels
-            drawText(canvas, latPos[i], inc[1].toInt(),
-                options.offsetLatLabelsLeft, pixelPos, true);
+            drawText(canvas, latPos[i], inc[1].toInt(), options.offsetLatLabelsLeft, pixelPos, true);
           }
         }
       }
@@ -229,8 +220,7 @@ class _LatLonPainter extends CustomPainter {
     }
 
     if (options._enableProfiling) {
-      addTimeForProfiling(
-          DateTime.now().microsecondsSinceEpoch - options._time);
+      addTimeForProfiling(DateTime.now().microsecondsSinceEpoch - options._time);
     }
   }
 
@@ -246,12 +236,10 @@ class _LatLonPainter extends CustomPainter {
       // calc median here, not using mean here
       // use "effective integer division" as suggested from IDE
       options._profilingVals.sort();
-      final int median =
-          options._profilingVals[(LatLonGridLayerOptions._samples - 1) ~/ 2];
+      final int median = options._profilingVals[(LatLonGridLayerOptions._samples - 1) ~/ 2];
 
       // print median once to console
-      print(
-          'median of draw() is $median us (out of ${LatLonGridLayerOptions._samples} samples)');
+      print('median of draw() is $median us (out of ${LatLonGridLayerOptions._samples} samples)');
       // reset counter
       options._profilingValCount = 0;
     }
@@ -271,8 +259,7 @@ class _LatLonPainter extends CustomPainter {
   }
 
   // draw one text label
-  void drawText(Canvas canvas, double degree, int digits, double posx,
-      double posy, bool isLat) {
+  void drawText(Canvas canvas, double degree, int digits, double posx, double posy, bool isLat) {
     final list = <_GridLabel>[];
     final label = _GridLabel(degree, digits, posx, posy, isLat);
 
@@ -318,10 +305,8 @@ class _LatLonPainter extends CustomPainter {
       // loop for draw calls
       for (int i = 0; i < list.length; i++) {
         // calc offset to place labels on lines
-        double offsetX =
-            options.placeLabelsOnLines ? list[i].textPainter.width / 2 : 0.0;
-        double offsetY =
-            options.placeLabelsOnLines ? list[i].textPainter.height / 2 : 0.0;
+        double offsetX = options.placeLabelsOnLines ? list[i].textPainter.width / 2 : 0.0;
+        double offsetY = options.placeLabelsOnLines ? list[i].textPainter.height / 2 : 0.0;
 
         // reset unwanted offset depending on lat or lon
         list[i].isLat ? offsetX = 0.0 : offsetY = 0.0;
@@ -384,8 +369,7 @@ class _LatLonPainter extends CustomPainter {
   TextPainter getTextPaint(String text) {
     // setup all text painter objects
     final textSpan = TextSpan(style: options.labelStyle, text: text);
-    return TextPainter(text: textSpan, textDirection: TextDirection.ltr)
-      ..layout();
+    return TextPainter(text: textSpan, textDirection: TextDirection.ltr)..layout();
   }
 
   @override
@@ -394,8 +378,8 @@ class _LatLonPainter extends CustomPainter {
   }
 
   // Generate a list of doubles between start and end with spacing inc
-  List<double> generatePositions(double start, double end, double inc,
-      bool extendedRange, double lowerBound, double upperBound) {
+  List<double> generatePositions(
+      double start, double end, double inc, bool extendedRange, double lowerBound, double upperBound) {
     final list = <double>[];
 
     // find first value
